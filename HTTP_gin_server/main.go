@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -14,10 +13,8 @@ func main() {
 	{
 		v1 := api.Group("/v1")
 		{
-			about := v1.Group("/about")
-			{
-				about.GET("/", getAbout)
-			}
+			v1.GET("/about", getAbout)
+
 			user := v1.Group("/user")
 			{
 				user.GET("/:id", getUserByID)
@@ -30,7 +27,7 @@ func main() {
 
 func getAbout(ctx *gin.Context) {
 	ctx.JSON(200, gin.H{
-		"message": "this is 'about' page",
+		"page": "this is 'about' page",
 	})
 }
 
@@ -41,13 +38,13 @@ func getUserByID(ctx *gin.Context) {
 			"error": "can't convert user ID",
 		})
 	}
-	if ID > 0 {
-		ctx.JSON(200, gin.H{
-			"message": fmt.Sprintf("this is the user: %v", ID),
-		})
-	} else {
+	if ID < 0 {
 		ctx.JSON(406, gin.H{
 			"error": "user ID has invalid value",
 		})
+		return
 	}
+	ctx.JSON(200, gin.H{
+		"id": ID,
+	})
 }
